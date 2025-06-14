@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Estudio: La Sombra de Jung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdf6f6; /* Pastel pink background */
+        }
+        .card {
+            background-color: #fef9e7; /* Pastel yellow */
+            border: 1px solid #fceecb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.08);
+        }
+        h1, h2, h3 {
+            color: #5d4037; /* Brown text */
+        }
+        .question {
+            background-color: #e3f2fd; /* Pastel blue */
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: #1e3a8a;
+        }
+        .question:hover {
+            background-color: #d1e9fc;
+        }
+        .answer {
+            display: none;
+            padding: 16px;
+            margin-top: -8px;
+            background-color: #ffffff;
+            border: 1px solid #e3f2fd;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            color: #333;
+        }
+        .ai-feature-card {
+             background-color: #fce4ec; /* Pastel pink */
+             border-color: #f8bbd0;
+        }
+        .ai-button {
+            background-color: #673ab7; /* Deep purple */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        .ai-button:hover {
+            background-color: #5e35b1;
+        }
+        .ai-button:disabled {
+            background-color: #9575cd;
+            cursor: not-allowed;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #d1c4e9;
+            margin-bottom: 1rem;
+            resize: vertical;
+        }
+        .ai-result {
+            background-color: #ffffff;
+            border: 1px dashed #b39ddb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 1rem;
+            white-space: pre-wrap; /* Preserve line breaks */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #673ab7;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">La Sombra Junguiana</h1>
+            <p class="text-lg text-gray-600">Una guía interactiva para el autoconocimiento</p>
+        </header>
+
+        <!-- Conceptos Clave -->
+        <section id="conceptos" class="card">
+            <h2 class="text-3xl font-bold mb-4">Conceptos Clave</h2>
+            <div class="space-y-4 text-gray-700">
+                 <p><strong>La Sombra:</strong> Es la parte de nuestra personalidad que reside en el inconsciente. Contiene todas las cualidades, impulsos y emociones que no reconocemos como propias, tanto las negativas (ira, envidia, egoísmo) como las positivas y no desarrolladas (la "Sombra Dorada": talentos ocultos, fortalezas).</p>
+                 <p><strong>Integración de la Sombra:</strong> No se trata de eliminarla, sino de hacerla consciente, reconocerla y aceptarla. Este proceso es fundamental para alcanzar la totalidad psíquica, un estado de equilibrio y plenitud.</p>
+            </div>
+        </section>
+        
+        <!-- Gemini Feature 1: Dream Analyzer -->
+        <section id="dream-analyzer" class="card ai-feature-card">
+            <h2 class="text-3xl font-bold mb-4">Analizador de Sueños con IA</h2>
+            <p class="text-gray-700 mb-4">Los sueños son el lenguaje del inconsciente. Describe un sueño que hayas tenido y la IA te ayudará a explorar posibles símbolos y arquetipos de tu Sombra.</p>
+            <textarea id="dream-input" rows="5" placeholder="Escribe aquí tu sueño lo más detallado posible..."></textarea>
+            <button id="analyze-dream-btn" class="ai-button">✨ Analizar mi Sueño</button>
+            <div id="dream-loader" class="hidden">
+                <div class="loader"></div>
+            </div>
+            <div id="dream-result" class="hidden"></div>
+        </section>
+
+        <!-- Gemini Feature 2: Golden Shadow Finder -->
+        <section id="golden-shadow" class="card ai-feature-card">
+            <h2 class="text-3xl font-bold mb-4">Descubre tu Sombra Dorada</h2>
+            <p class="text-gray-700 mb-4">Aquello que admiras intensamente en otros puede ser un reflejo de tu propio potencial no reconocido. ¿Qué cualidades te fascinan en los demás?</p>
+            <textarea id="admiration-input" rows="3" placeholder="Por ejemplo: 'Admiro la confianza con la que habla en público mi colega', 'Me encanta la creatividad de mi artista favorito...'"></textarea>
+            <button id="golden-shadow-btn" class="ai-button">✨ Revelar mi Potencial</button>
+            <div id="golden-loader" class="hidden">
+                <div class="loader"></div>
+            </div>
+            <div id="golden-result" class="hidden"></div>
+        </section>
+        
+        <!-- NEW Gemini Feature 3: Projection Explorer -->
+        <section id="projection-explorer" class="card ai-feature-card">
+            <h2 class="text-3xl font-bold mb-4">Explorador de Proyecciones con IA</h2>
+            <p class="text-gray-700 mb-4">Aquello que nos irrita o molesta intensamente en otros a menudo es una "proyección" de una parte de nuestra Sombra. Describe una persona o situación que te cause una fuerte reacción emocional.</p>
+            <textarea id="projection-input" rows="4" placeholder="Por ejemplo: 'No soporto cuando la gente es impuntual', 'Me irrita la arrogancia de mi jefe...'"></textarea>
+            <button id="analyze-projection-btn" class="ai-button">✨ Explorar Proyección</button>
+            <div id="projection-loader" class="hidden">
+                <div class="loader"></div>
+            </div>
+            <div id="projection-result" class="hidden"></div>
+        </section>
+
+        <!-- Preguntas y Respuestas -->
+        <section id="preguntas" class="card">
+            <h2 class="text-3xl font-bold mb-4">Cuestionario Interactivo</h2>
+            <div id="qa-container">
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Cuestionario Interactivo Original ---
+            const questions = [
+                { q: "¿Qué es 'La Sombra' según Carl Jung?", a: "Es la parte de la personalidad que está reprimida o ignorada. Reside en el inconsciente y contiene cualidades (tanto 'malas' como talentos positivos) que no reconocemos en nosotros mismos." },
+                { q: "¿Por qué es importante integrar la Sombra?", a: "Es fundamental para lograr una personalidad más completa y alcanzar el equilibrio psicológico. Ignorarla puede llevar a proyecciones, conflictos internos y comportamientos autodestructivos." },
+                { q: "¿La Sombra contiene solo aspectos negativos?", a: "No. También contiene aspectos positivos no desarrollados, lo que se conoce como la 'Sombra Dorada'. Estos pueden ser talentos, creatividad o fortalezas que no hemos reconocido en nosotros." },
+                { q: "¿Qué es una 'proyección' en este contexto?", a: "Es el acto inconsciente de atribuir a otras personas los rasgos de nuestra propia Sombra. Lo que nos irrita intensamente en otros suele ser un aspecto nuestro que no hemos aceptado." },
+                { q: "¿Integrar la Sombra significa eliminarla?", a: "No, en absoluto. Significa hacerla consciente, reconocerla, aceptarla y recuperar sus cualidades para enriquecer nuestra personalidad consciente." }
+            ];
+
+            const qaContainer = document.getElementById('qa-container');
+            if (qaContainer) {
+                questions.forEach(item => {
+                    const qaBlock = document.createElement('div');
+                    const questionDiv = document.createElement('div');
+                    questionDiv.classList.add('question');
+                    questionDiv.textContent = item.q;
+                    const answerDiv = document.createElement('div');
+                    answerDiv.classList.add('answer');
+                    answerDiv.textContent = item.a;
+                    qaBlock.appendChild(questionDiv);
+                    qaBlock.appendChild(answerDiv);
+                    qaContainer.appendChild(qaBlock);
+                    
+                    questionDiv.addEventListener('click', () => {
+                        document.querySelectorAll('.answer').forEach(ans => {
+                            if (ans !== answerDiv) {
+                                ans.style.display = 'none';
+                            }
+                        });
+                        const isVisible = answerDiv.style.display === 'block';
+                        answerDiv.style.display = isVisible ? 'none' : 'block';
+                    });
+                });
+            }
+
+            // --- Gemini API Integration ---
+
+            const dreamInput = document.getElementById('dream-input');
+            const analyzeDreamBtn = document.getElementById('analyze-dream-btn');
+            const dreamLoader = document.getElementById('dream-loader');
+            const dreamResult = document.getElementById('dream-result');
+
+            const admirationInput = document.getElementById('admiration-input');
+            const goldenShadowBtn = document.getElementById('golden-shadow-btn');
+            const goldenLoader = document.getElementById('golden-loader');
+            const goldenResult = document.getElementById('golden-result');
+            
+            const projectionInput = document.getElementById('projection-input');
+            const analyzeProjectionBtn = document.getElementById('analyze-projection-btn');
+            const projectionLoader = document.getElementById('projection-loader');
+            const projectionResult = document.getElementById('projection-result');
+
+            // --- API KEY INSERTED HERE - PLEASE DELETE AND REPLACE THIS KEY LATER ---
+            const apiKey = "AIzaSyB6kmQaO7HLajT-H0MiXuFjUAhR1ovFthk"; 
+
+            async function callGeminiAPI(prompt, button, loader, resultContainer) {
+                if (!prompt.trim()) {
+                    resultContainer.textContent = "Por favor, escribe algo en el cuadro de texto.";
+                    resultContainer.classList.remove('hidden');
+                    resultContainer.classList.add('ai-result');
+                    return;
+                }
+
+                button.disabled = true;
+                loader.classList.remove('hidden');
+                resultContainer.classList.add('hidden');
+
+                try {
+                    // NOTE: Switched to a more common model 'gemini-pro' as 'gemini-2.0-flash' might not be universally available.
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+                    const payload = {
+                        contents: [{
+                            role: "user",
+                            parts: [{ text: prompt }]
+                        }]
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorBody = await response.json();
+                        console.error("API Error Body:", errorBody);
+                        throw new Error(`Error en la API: ${response.statusText}. Revisa la consola para más detalles.`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts.length > 0) {
+                        let text = result.candidates[0].content.parts[0].text;
+                        // Basic formatting to improve readability
+                        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
+                        text = text.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italics
+                        resultContainer.innerHTML = text.replace(/\n/g, '<br>');
+                    } else {
+                         console.error("Respuesta inesperada de la API:", result);
+                        resultContainer.textContent = "No se pudo obtener una respuesta con el formato esperado de la IA. Inténtalo de nuevo.";
+                    }
+                } catch (error) {
+                    console.error("Error llamando a la API de Gemini:", error);
+                    resultContainer.textContent = "Ocurrió un error al conectar con el servicio de IA. " + error.message;
+                } finally {
+                    button.disabled = false;
+                    loader.classList.add('hidden');
+                    resultContainer.classList.remove('hidden');
+                    resultContainer.classList.add('ai-result');
+                }
+            }
+
+            analyzeDreamBtn.addEventListener('click', () => {
+                const dreamText = dreamInput.value;
+                const prompt = `Eres un asistente virtual experto en psicología junguiana. Un usuario te compartirá un sueño. Tu tarea es analizarlo desde una perspectiva junguiana, identificando posibles símbolos, arquetipos y manifestaciones de 'La Sombra'. No ofrezcas un diagnóstico. Habla de forma amable y especulativa, usando frases como 'esto podría simbolizar...', 'quizás refleje...'. Termina siempre con un recordatorio de que esto es una exploración y no reemplaza la terapia profesional. Aquí está el sueño: "${dreamText}"`;
+                callGeminiAPI(prompt, analyzeDreamBtn, dreamLoader, dreamResult);
+            });
+
+            goldenShadowBtn.addEventListener('click', () => {
+                const admirationText = admirationInput.value;
+                const prompt = `Eres un coach de desarrollo personal con conocimientos de psicología junguiana. Un usuario te dirá qué admira en otras personas. Tu tarea es reinterpretar estas cualidades como posibles aspectos de su 'Sombra Dorada' (talentos y potenciales no reconocidos en sí mismos). Sé alentador y positivo. Sugiere cómo podrían empezar a cultivar estas cualidades. No des un diagnóstico. Habla de forma motivadora. Aquí está lo que admiran: "${admirationText}"`;
+                callGeminiAPI(prompt, goldenShadowBtn, goldenLoader, goldenResult);
+            });
+
+            analyzeProjectionBtn.addEventListener('click', () => {
+                const projectionText = projectionInput.value;
+                const prompt = `Eres un guía con experiencia en psicología junguiana. Un usuario describirá a una persona o situación que le causa una fuerte irritación o molestia. Tu tarea es ayudarle a reflexionar sobre cómo esta reacción podría ser una 'proyección' de su propia Sombra. No acuses ni afirmes. En su lugar, haz preguntas y usa frases como 'A veces, lo que nos molesta en otros es un eco de algo en nosotros...', '¿Qué pasaría si esta cualidad, en un contexto diferente, pudiera ser una fortaleza?', 'Exploremos qué podría representar este sentimiento...'. El objetivo es la auto-reflexión, no el juicio. Termina siempre con un recordatorio de que esto es una exploración y no reemplaza la terapia profesional. Aquí está la descripción del usuario: "${projectionText}"`;
+                callGeminiAPI(prompt, analyzeProjectionBtn, projectionLoader, projectionResult);
+            });
+        });
+    </script>
+</body>
+</html>
