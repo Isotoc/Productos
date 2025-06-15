@@ -13,17 +13,15 @@
     <style>
         /* --- ESTILOS CSS ADICIONALES --- */
         
-        /* Usamos las fuentes importadas */
         body {
             font-family: 'Lato', sans-serif;
-            background-color: #fdf8f5; /* Un color rosa pálido/beige muy sutil */
+            background-color: #fdf8f5;
         }
 
         h1, .product-info h2 {
             font-family: 'Playfair Display', serif;
         }
 
-        /* Estilos específicos que no cubre Tailwind o para sobreescribir */
         .product-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -33,13 +31,19 @@
         }
         
         .stock.disponible {
-            background-color: #e0f2f1; /* Verde menta pálido */
+            background-color: #e0f2f1;
             color: #00796b;
         }
 
         .stock.pocas-unidades {
-            background-color: #fff3e0; /* Naranja pálido */
+            background-color: #fff3e0;
             color: #ef6c00;
+        }
+
+        /* Estilo para el botón de filtro activo */
+        .filter-btn.active {
+             background-color: #c59d5f;
+             color: white;
         }
     </style>
 </head>
@@ -52,6 +56,13 @@
         </header>
 
         <main>
+            <!-- Contenedor de los botones de filtro -->
+            <div id="filter-container" class="flex justify-center flex-wrap gap-4 mb-8">
+                <button class="filter-btn active py-2 px-6 border-2 border-yellow-700 text-yellow-700 font-semibold rounded-full hover:bg-yellow-700 hover:text-white transition-colors duration-300" data-brand="Todos">Todos</button>
+                <button class="filter-btn py-2 px-6 border-2 border-yellow-700 text-yellow-700 font-semibold rounded-full hover:bg-yellow-700 hover:text-white transition-colors duration-300" data-brand="Alfaparf">Alfaparf</button>
+                <button class="filter-btn py-2 px-6 border-2 border-yellow-700 text-yellow-700 font-semibold rounded-full hover:bg-yellow-700 hover:text-white transition-colors duration-300" data-brand="Salerm">Salerm</button>
+            </div>
+            
             <!-- Aquí se insertarán los productos dinámicamente -->
             <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 py-5">
                 <p id="loading-message" class="text-center text-xl p-12 text-gray-500 col-span-full">Cargando productos...</p>
@@ -66,63 +77,90 @@
     <script>
         // --- CÓDIGO JAVASCRIPT ---
 
-        // 1. URL original de tu Google Sheet.
         const originalSheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQrbcaFnev1zv2hLmC--6nuzSuPNM_e7jfGue8a31i91VwcgDLdQ5N1Y_i2lEfVJdW-L_qNOI0sslhw/pub?gid=0&single=true&output=csv';
-        
-        // 2. URL del proxy para evitar errores de CORS.
-        const proxyURL = 'https://api.allorigins.win/raw?url=';
-
-        // 3. URL final que combina el proxy y la URL de tu hoja (codificada).
+        // Se cambió el proxy a una alternativa más estable para evitar errores de fetch.
+        const proxyURL = 'https://corsproxy.io/?';
         const sheetURL = proxyURL + encodeURIComponent(originalSheetURL);
 
-        // Ejecutamos el código cuando el contenido del DOM esté completamente cargado
+        let allProducts = []; // Variable para guardar todos los productos
+
         document.addEventListener('DOMContentLoaded', () => {
             fetchProducts();
+            setupFilters();
         });
 
         async function fetchProducts() {
-            const productGrid = document.getElementById('product-grid');
             const loadingMessage = document.getElementById('loading-message');
 
             try {
                 const response = await fetch(sheetURL);
                 if (!response.ok) {
-                    throw new Error('Error al cargar los datos desde el proxy.');
+                    throw new Error(`Error al cargar los datos. Estado: ${response.status}`);
                 }
                 const csvText = await response.text();
-                
-                // Procesamos el texto CSV
-                const products = parseCSV(csvText);
+                allProducts = parseCSV(csvText); // Guardamos los productos
 
-                // Ocultamos el mensaje de "Cargando..."
-                if(loadingMessage) {
+                if (loadingMessage) {
                     loadingMessage.style.display = 'none';
                 }
-
-                // Mostramos cada producto
-                products.forEach(product => {
-                    const card = createProductCard(product);
-                    productGrid.appendChild(card);
-                });
+                
+                displayProducts(allProducts); // Mostramos todos los productos inicialmente
 
             } catch (error) {
                 console.error('Hubo un problema:', error);
-                if(loadingMessage) {
-                    loadingMessage.textContent = 'No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.';
+                if (loadingMessage) {
+                    loadingMessage.textContent = 'No se pudieron cargar los productos. Por favor, revisa la consola para más detalles.';
                 }
             }
         }
 
+        function displayProducts(products) {
+            const productGrid = document.getElementById('product-grid');
+            productGrid.innerHTML = ''; // Limpiamos la grilla antes de mostrar nuevos productos
+
+            if (products.length === 0) {
+                 productGrid.innerHTML = `<p class="text-center text-xl p-12 text-gray-500 col-span-full">No se encontraron productos para esta marca.</p>`;
+                 return;
+            }
+
+            products.forEach(product => {
+                const card = createProductCard(product);
+                productGrid.appendChild(card);
+            });
+        }
+
+        function setupFilters() {
+            const filterContainer = document.getElementById('filter-container');
+            if (!filterContainer) return;
+
+            filterContainer.addEventListener('click', (event) => {
+                const target = event.target.closest('.filter-btn');
+                if (!target) return; // Si el clic no fue en un botón, no hacemos nada
+
+                // Manejo del estilo del botón activo
+                const buttons = filterContainer.querySelectorAll('.filter-btn');
+                buttons.forEach(btn => btn.classList.remove('active'));
+                target.classList.add('active');
+
+                const brand = target.dataset.brand;
+                
+                const filteredProducts = brand === 'Todos'
+                    ? allProducts
+                    : allProducts.filter(product => product.Marca && product.Marca.toLowerCase() === brand.toLowerCase());
+                
+                displayProducts(filteredProducts);
+            });
+        }
+        
         function parseCSV(text) {
-            const lines = text.split(/\r?\n/).filter(line => line.trim() !== ''); // Divide por líneas y filtra las vacías
-            if (lines.length < 2) return []; // Si no hay datos (solo cabecera o vacío)
+            const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+            if (lines.length < 2) return []; 
             
             const headers = lines[0].split(',').map(h => h.trim());
             const data = [];
 
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
-                
                 const entry = {};
                 for (let j = 0; j < headers.length; j++) {
                     let value = (values[j] || '').trim();
@@ -135,19 +173,10 @@
             }
             return data;
         }
-
-        /**
-         * Formatea un valor numérico como moneda chilena (ej: $11.990).
-         * @param {string | number} priceValue - El valor del precio a formatear.
-         * @returns {string} El precio formateado como string.
-         */
+        
         function formatPrice(priceValue) {
             const number = parseFloat(priceValue);
-            if (isNaN(number)) {
-                return priceValue; // Devuelve el valor original si no es un número
-            }
-            // Intl.NumberFormat para un formato de moneda robusto.
-            // 'es-CL' usa punto como separador de miles y muestra el signo $.
+            if (isNaN(number)) return priceValue;
             return new Intl.NumberFormat('es-CL', {
                 style: 'currency',
                 currency: 'CLP',
@@ -164,13 +193,9 @@
             let stockText = product.Stock || 'No disponible';
             const stockStatus = stockText.toLowerCase().replace(/\s+/g, '-');
             
-            if (stockStatus === 'disponible') {
-                stockClass = 'disponible';
-            } else if (stockStatus === 'pocas-unidades') {
-                stockClass = 'pocas-unidades';
-            }
+            if (stockStatus === 'disponible') stockClass = 'disponible';
+            else if (stockStatus === 'pocas-unidades') stockClass = 'pocas-unidades';
 
-            // Usamos la función para formatear el precio
             const formattedPrice = formatPrice(product.Precio);
 
             card.innerHTML = `
@@ -187,16 +212,6 @@
             `;
             return card;
         }
-
     </script>
 </body>
 </html>
-```
-
-Ahora los precios de los productos se mostrarán con el formato que querías.
-
-Los cambios clave fueron:
-* **Nueva función `formatPrice`**: Se encarga de la lógica de formato.
-* **Llamada a la función**: Dentro de `createProductCard`, ahora se llama a `formatPrice` antes de insertar el precio en el HTML de la tarjeta.
-
-Si quieres hacer algún otro ajuste, ¡di
