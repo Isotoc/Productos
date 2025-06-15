@@ -9,137 +9,27 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- ESTILOS CSS --- */
+        /* --- ESTILOS CSS ADICIONALES --- */
         
-        /* Reseteo y estilos base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Usamos las fuentes importadas */
         body {
             font-family: 'Lato', sans-serif;
             background-color: #fdf8f5; /* Un color rosa pálido/beige muy sutil */
-            color: #444;
-            line-height: 1.6;
         }
 
-        /* Contenedor principal */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Cabecera */
-        header {
-            text-align: center;
-            padding: 40px 0;
-        }
-
-        header h1 {
+        h1, .product-info h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            color: #333;
-            margin-bottom: 10px;
         }
 
-        header p {
-            font-size: 1.1rem;
-            color: #666;
-        }
-
-        /* Contenedor de la cuadrícula de productos */
-        #product-grid {
-            display: grid;
-            /* Columnas responsivas: 3 en escritorio, 2 en tablet, 1 en móvil */
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px; /* Espacio entre tarjetas */
-            padding: 20px 0;
-        }
-        
-        /* Mensaje de carga */
-        #loading-message {
-            text-align: center;
-            font-size: 1.2rem;
-            padding: 50px;
-            color: #888;
-        }
-
-        /* Tarjeta de producto individual */
+        /* Estilos específicos que no cubre Tailwind o para sobreescribir */
         .product-card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 280px; /* Altura fija para la imagen */
-            object-fit: cover; /* Asegura que la imagen cubra el espacio sin deformarse */
-            display: block;
-        }
-
-        .product-info {
-            padding: 25px;
-            flex-grow: 1; /* Permite que este div crezca y empuje el footer hacia abajo */
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-info .brand {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #c59d5f; /* Un tono dorado/bronce */
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .product-info h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            color: #222;
-            margin-bottom: 10px;
-        }
-
-        .product-info .description {
-            font-size: 0.95rem;
-            color: #666;
-            flex-grow: 1; /* Hace que la descripción ocupe el espacio disponible */
-            margin-bottom: 15px;
-        }
-
-        .product-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto; /* Empuja esta sección al final de .product-info */
-        }
-
-        .product-info .price {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #333;
-        }
-        
-        .product-info .stock {
-            font-size: 0.9rem;
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
         }
         
         .stock.disponible {
@@ -151,35 +41,25 @@
             background-color: #fff3e0; /* Naranja pálido */
             color: #ef6c00;
         }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 30px;
-            margin-top: 40px;
-            border-top: 1px solid #eee;
-            color: #999;
-        }
-        
     </style>
 </head>
-<body>
+<body class="text-gray-800">
 
-    <div class="container">
-        <header>
-            <h1>Nuestro Catálogo</h1>
-            <p>Productos de alta gama para el cuidado de tu cabello</p>
+    <div class="container mx-auto p-5 max-w-7xl">
+        <header class="text-center py-10">
+            <h1 class="text-4xl md:text-5xl text-gray-800 mb-2">Nuestro Catálogo</h1>
+            <p class="text-lg text-gray-600">Productos de alta gama para el cuidado de tu cabello</p>
         </header>
 
         <main>
             <!-- Aquí se insertarán los productos dinámicamente -->
-            <div id="product-grid">
-                <p id="loading-message">Cargando productos...</p>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 py-5">
+                <p id="loading-message" class="text-center text-xl p-12 text-gray-500 col-span-full">Cargando productos...</p>
             </div>
         </main>
 
-        <footer>
-            <p>© 2024 Tu Marca - Todos los derechos reservados.</p>
+        <footer class="text-center p-8 mt-10 border-t border-gray-200">
+            <p class="text-gray-500">© 2024 Tu Marca - Todos los derechos reservados.</p>
         </footer>
     </div>
 
@@ -215,7 +95,9 @@
                 const products = parseCSV(csvText);
 
                 // Ocultamos el mensaje de "Cargando..."
-                loadingMessage.style.display = 'none';
+                if(loadingMessage) {
+                    loadingMessage.style.display = 'none';
+                }
 
                 // Mostramos cada producto
                 products.forEach(product => {
@@ -225,52 +107,81 @@
 
             } catch (error) {
                 console.error('Hubo un problema:', error);
-                loadingMessage.textContent = 'No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.';
+                if(loadingMessage) {
+                    loadingMessage.textContent = 'No se pudieron cargar los productos. Por favor, inténtalo de nuevo más tarde.';
+                }
             }
         }
 
         function parseCSV(text) {
-            const lines = text.split(/\r?\n/); // Divide por líneas
-            const headers = lines[0].split(',');
+            const lines = text.split(/\r?\n/).filter(line => line.trim() !== ''); // Divide por líneas y filtra las vacías
+            if (lines.length < 2) return []; // Si no hay datos (solo cabecera o vacío)
+            
+            const headers = lines[0].split(',').map(h => h.trim());
             const data = [];
 
             for (let i = 1; i < lines.length; i++) {
-                if (!lines[i]) continue; // Salta líneas vacías
+                const values = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
                 
-                const values = lines[i].split(',');
                 const entry = {};
-
-                headers.forEach((header, index) => {
-                    entry[header.trim()] = values[index] ? values[index].trim() : '';
-                });
-
+                for (let j = 0; j < headers.length; j++) {
+                    let value = (values[j] || '').trim();
+                    if (value.startsWith('"') && value.endsWith('"')) {
+                        value = value.substring(1, value.length - 1);
+                    }
+                    entry[headers[j]] = value;
+                }
                 data.push(entry);
             }
             return data;
         }
 
+        /**
+         * Formatea un valor numérico como moneda chilena (ej: $11.990).
+         * @param {string | number} priceValue - El valor del precio a formatear.
+         * @returns {string} El precio formateado como string.
+         */
+        function formatPrice(priceValue) {
+            const number = parseFloat(priceValue);
+            if (isNaN(number)) {
+                return priceValue; // Devuelve el valor original si no es un número
+            }
+            // Intl.NumberFormat para un formato de moneda robusto.
+            // 'es-CL' usa punto como separador de miles y muestra el signo $.
+            return new Intl.NumberFormat('es-CL', {
+                style: 'currency',
+                currency: 'CLP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(number);
+        }
+
         function createProductCard(product) {
             const card = document.createElement('div');
-            card.className = 'product-card';
+            card.className = 'product-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col';
 
             let stockClass = '';
-            const stockText = (product.Stock || '').toLowerCase().replace(/\s+/g, '-');
-            if (stockText === 'disponible') {
+            let stockText = product.Stock || 'No disponible';
+            const stockStatus = stockText.toLowerCase().replace(/\s+/g, '-');
+            
+            if (stockStatus === 'disponible') {
                 stockClass = 'disponible';
-            } else if (stockText === 'pocas-unidades') {
+            } else if (stockStatus === 'pocas-unidades') {
                 stockClass = 'pocas-unidades';
             }
 
-            // Usamos los nombres de las columnas de tu Excel
+            // Usamos la función para formatear el precio
+            const formattedPrice = formatPrice(product.Precio);
+
             card.innerHTML = `
-                <img src="${product.URL_Imagen}" alt="${product.NombreProducto}">
-                <div class="product-info">
-                    <span class="brand">${product.Marca}</span>
-                    <h2>${product.NombreProducto}</h2>
-                    <p class="description">${product.Descripcion}</p>
-                    <div class="product-details">
-                         <span class="stock ${stockClass}">${product.Stock}</span>
-                         <span class="price">${product.Precio}</span>
+                <img src="${product.URL_Imagen}" alt="Imagen de ${product.NombreProducto}" class="w-full h-72 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/fdf8f5/c59d5f?text=Imagen+no+disponible';">
+                <div class="p-6 flex flex-col flex-grow">
+                    <span class="brand text-sm font-bold text-yellow-600 uppercase tracking-wider mb-1">${product.Marca}</span>
+                    <h2 class="text-2xl text-gray-800 mb-2">${product.NombreProducto}</h2>
+                    <p class="description text-gray-600 flex-grow mb-4">${product.Descripcion}</p>
+                    <div class="product-details flex justify-between items-center mt-auto">
+                        <span class="stock text-sm font-bold py-1 px-3 rounded-md ${stockClass}">${stockText}</span>
+                        <span class="price text-2xl font-bold text-gray-800">${formattedPrice}</span>
                     </div>
                 </div>
             `;
@@ -280,3 +191,12 @@
     </script>
 </body>
 </html>
+```
+
+Ahora los precios de los productos se mostrarán con el formato que querías.
+
+Los cambios clave fueron:
+* **Nueva función `formatPrice`**: Se encarga de la lógica de formato.
+* **Llamada a la función**: Dentro de `createProductCard`, ahora se llama a `formatPrice` antes de insertar el precio en el HTML de la tarjeta.
+
+Si quieres hacer algún otro ajuste, ¡di
